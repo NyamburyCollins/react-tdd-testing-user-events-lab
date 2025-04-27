@@ -1,24 +1,140 @@
-function App() {
-  return (
-    <main>
-      <h1>Hi, I'm (your name)</h1>
-      <img alt="My profile pic" src="https://via.placeholder.com/350" />
-      <h2>About Me</h2>
-      <p>
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
-        tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
-        veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
-        commodo consequat. Duis aute irure dolor in reprehenderit in voluptate
-        velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint
-        occaecat cupidatat non proident, sunt in culpa qui officia deserunt
-        mollit anim id est laborum.
-      </p>
+import React, { useState } from 'react';
+import './App.css';
 
-      <div>
-        <a href="https://github.com">GitHub</a>
-        <a href="https://linkedin.com">LinkedIn</a>
+function App() {
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    interests: {
+      technology: false,
+      design: false,
+      business: false
+    }
+  });
+  const [submitted, setSubmitted] = useState(false);
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const handleCheckboxChange = (e) => {
+    const { name, checked } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      interests: {
+        ...prev.interests,
+        [name]: checked
+      }
+    }));
+  };
+
+  const getSelectedInterests = () => {
+    return Object.entries(formData.interests)
+      .filter(([_, value]) => value)
+      .map(([key]) => key);
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    setSubmitted(true);
+  };
+
+  if (submitted) {
+    const selectedInterests = getSelectedInterests();
+    return (
+      <div className="App">
+        {/* Your existing portfolio content */}
+        
+        <section aria-label="Submission confirmation">
+          <h2>Thank You, {formData.name}!</h2>
+          <p>We've received your submission with email: {formData.email}</p>
+          {selectedInterests.length > 0 && (
+            <>
+              <p>Your selected interests:</p>
+              <ul>
+                {selectedInterests.map(interest => (
+                  <li key={interest}>{interest}</li>
+                ))}
+              </ul>
+            </>
+          )}
+        </section>
       </div>
-    </main>
+    );
+  }
+
+  return (
+    <div className="App">
+      {/* Your existing portfolio content */}
+      
+      <section aria-label="Newsletter signup">
+        <h2>Stay Updated</h2>
+        <form onSubmit={handleSubmit}>
+          <div>
+            <label htmlFor="name">Name:</label>
+            <input
+              type="text"
+              id="name"
+              name="name"
+              value={formData.name}
+              onChange={handleInputChange}
+              required
+            />
+          </div>
+          
+          <div>
+            <label htmlFor="email">Email:</label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              value={formData.email}
+              onChange={handleInputChange}
+              required
+            />
+          </div>
+          
+          <fieldset>
+            <legend>Interests</legend>
+            <label>
+              <input
+                type="checkbox"
+                name="technology"
+                checked={formData.interests.technology}
+                onChange={handleCheckboxChange}
+              />
+              Technology
+            </label>
+            
+            <label>
+              <input
+                type="checkbox"
+                name="design"
+                checked={formData.interests.design}
+                onChange={handleCheckboxChange}
+              />
+              Design
+            </label>
+            
+            <label>
+              <input
+                type="checkbox"
+                name="business"
+                checked={formData.interests.business}
+                onChange={handleCheckboxChange}
+              />
+              Business
+            </label>
+          </fieldset>
+          
+          <button type="submit">Submit</button>
+        </form>
+      </section>
+    </div>
   );
 }
 
